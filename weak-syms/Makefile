@@ -1,14 +1,13 @@
-CC = gcc
+CC = clang
 CFLAGS = -I.
 DYLDFLAGS = -L. -lgc
 
 OBJS=gc.o main.o
 SHOBJS=libgc.so
-HEADERS=gc.h
+HEADERS=gc.h rubygc.h
 
 %.o: %.c $(HEADERS)
-	echo "BUILDING"
-	$(CC) -Wall -c -o $@ $(CFLAGS)
+	$(CC) -Wall -c $< -o $@ $(CFLAGS)
 
 libgc.so: 
 	$(CC) -shared -fPIC rubygc.c -o $@
