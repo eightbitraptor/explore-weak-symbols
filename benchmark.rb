@@ -7,7 +7,10 @@ experiments = %w{
   weak-syms
   dlopen
 }
-experiment_commands = {}
+experiment_commands = {
+  default: {},
+  override: {}
+}
 
 experiments.each do |experiment|
   puts "=== BUILDING #{experiment.upcase}\n"
@@ -20,16 +23,14 @@ experiments.each do |experiment|
     "LD_PRELOAD=#{__dir__}/#{experiment}/libgc.so"
   end
   
-  experiment_commands[experiment] = {
-    default: "./#{experiment}/main",
-    override: "#{env} ./#{experiment}/main",
-  }
+  experiment_commands[:default][experiment] = "./#{experiment}/main"
+  experiment_commands[:override][experiment] = "#{env} ./#{experiment}/main"
 end
 
 puts ""
 
-experiment_commands.each_pair do |name, experiment|
-  experiment.each_pair do |branch, command|
+experiment_commands.each_pair do |branch, experiments|
+  experiments.each_pair do |name, command|
     puts "=== TESTING #{name}-#{branch}"
     stdout, status = Open3.capture2(command)
 
@@ -46,12 +47,17 @@ end
 
 puts ""
 
-Benchmark.ips do |x|
-  experiment_commands.each_pair do |name, commands|
-    commands.each_pair do |branch, experiment_command|
-      x.report("#{name}-#{branch}") {
-        system("#{experiment_command} > /dev/null")
+[:default, :override].each do |branch|
+  Benchmark.ips do |x|
+    x.stats = :bootstrap
+    x.confidence = 95
+    
+    experiment_commands[branch].each_pair do |name, command|
+      x.report("#{branch}-#{name}") {
+        system("#{command} > /dev/null")
       }
     end
+    x.compare!
   end
 end
+

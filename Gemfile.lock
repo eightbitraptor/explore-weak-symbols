@@ -1,14 +1,24 @@
 GEM
   remote: https://www.rubygems.org/
   specs:
+    base64 (0.2.0)
     benchmark-ips (2.13.0)
+    bigdecimal (3.1.7)
+    kalibera (0.1.2)
+      memoist (~> 0.16)
+      rbzip2 (~> 0.3)
+    memoist (0.16.2)
+    rbzip2 (0.3.0)
 
 PLATFORMS
   ruby
   x86_64-linux
 
 DEPENDENCIES
+  base64
   benchmark-ips
+  bigdecimal
+  kalibera
 
 BUNDLED WITH
    2.5.6
