@@ -5,6 +5,9 @@
 #include "gc.h"
 #include "rubygc.h"
 
+#ifndef GC_TEST_ITERS
+#define GC_TEST_ITERS 0
+#endif
 
 typedef struct gc_function_map {
     void (*gc_init)(void);
@@ -34,9 +37,11 @@ load_external_gc(void)
 int
 main(int argc, char **argv)
 {
+    if (!GC_TEST_ITERS) return 1;
+    
     gc_function_map_t * gc_funcs = load_external_gc();
 
-    for(int i = 0; i<500000; i++) {
+    for(int i = 0; i < GC_TEST_ITERS; i++) {
         gc_funcs->gc_init();
     }
     

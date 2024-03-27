@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -I.
+override CFLAGS := $(CFLAGS) -I.
 PIC=-fPIC
 DEBUGFLAGS=-g -Wall -Werror
 OPTFLAGS=-O3

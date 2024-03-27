@@ -1,6 +1,8 @@
 require 'benchmark/ips'
 require 'open3'
 
+ITERATIONS=50000
+
 experiments = %w{
   weak-syms
   dlopen
@@ -9,7 +11,7 @@ experiment_commands = {}
 
 experiments.each do |experiment|
   puts "=== BUILDING #{experiment.upcase}\n"
-  system("make -C #{experiment} clean default > /dev/null");
+  system("make -C #{experiment} clean default CFLAGS=-DGC_TEST_ITERS=#{ITERATIONS}> /dev/null");
 
   env = case experiment
   when "dlopen"
