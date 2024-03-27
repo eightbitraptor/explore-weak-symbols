@@ -1,5 +1,8 @@
-CC = clang
+CC = gcc
 CFLAGS = -I.
+PIC=-fPIC
+DEBUGFLAGS=-g -Wall -Werror
+OPTFLAGS=-O3
 DYLDFLAGS = -L. -lgc
 
 OBJS=gc.o main.o
@@ -10,17 +13,14 @@ HEADERS=gc.h rubygc.h
 default: main libgc.so
 
 %.o: %.c $(HEADERS)
-	$(CC) -Wall -c $< -o $@ $(CFLAGS)
+	$(CC) $(CFLAGS) $(PIC) -c $< -o $@ $(CFLAGS)
 
-libgc.so: 
-	$(CC) -shared -fPIC rubygc.c -o $@
+$(SHOBJS): $(HEADERS)
+	$(CC) $(CFLAGS) $(PIC) -shared rubygc.c -o $@
 
-main: $(OBJS)
+main: $(OBJS) $(SHOBJS)
 	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $(OBJS)
-
-main-all-static: $(OBJS) rubygc.o
-	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $(OBJS) rubygc.o
 
 .PHONY: clean
 clean:
-	rm -rf *.so *.o main main-all-static
+	rm -rf *.so *.o main

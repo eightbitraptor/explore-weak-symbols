@@ -36,7 +36,9 @@ main(int argc, char **argv)
 {
     gc_function_map_t * gc_funcs = load_external_gc();
 
-    gc_funcs->gc_init();
+    for(int i = 0; i<500000; i++) {
+        gc_funcs->gc_init();
+    }
     
     return 0;
 }
